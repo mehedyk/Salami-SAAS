@@ -263,7 +263,7 @@ export default function PricingPage() {
 
                 <p className="text-xs text-pink-700 flex items-start gap-1">
                   <AlertCircle className="w-3 h-3 mt-0.5 shrink-0" />
-                  Use &quot;Send Money&quot; in bKash app. Do NOT use Request Money.
+                  Use &apos;Send Money&apos; in bKash app. Do NOT use Request Money.
                 </p>
               </div>
 

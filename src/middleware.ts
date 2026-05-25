@@ -19,7 +19,7 @@ import type { NextRequest } from "next/server";
 // The sliding-window algorithm below allows MAX_REQUESTS per IP per
 // RATE_LIMIT_WINDOW seconds, smoothly — no burst at window boundaries.
 
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 import { Ratelimit } from "@upstash/ratelimit";
 
 const redis = new Redis({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -51,9 +51,9 @@ export default function DashboardPage() {
     if (status === "authenticated") {
       fetchCards();
     }
-  }, [status]);
+  }, [status, fetchCards]);
 
-  const fetchCards = async () => {
+  const fetchCards = useCallback(async () => {
     try {
       const res = await fetch("/api/cards");
       const data = await res.json();
@@ -63,7 +63,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addToast]);
 
   const copyLink = (slug: string) => {
     const url = `${window.location.origin}/card/${slug}`;
