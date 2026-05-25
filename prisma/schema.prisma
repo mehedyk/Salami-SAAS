@@ -50,7 +50,8 @@ model User {
   notifications Notification[]
   viewedAnalytics Analytics[]
   paymentRequests PaymentRequest[]
-  reviewedPayments PaymentRequest[] @relation("PaymentReviewedBy")
+  reviewedPayments  PaymentRequest[] @relation("PaymentReviewedBy")
+  reviewedRequests  UserRequest[]    @relation("ReviewedBy")
 
   @@map("users")
 }
