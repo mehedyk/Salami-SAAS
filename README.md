@@ -5,7 +5,7 @@ A beautiful, feature-rich SaaS platform for creating and sharing personalized Ei
 ![EidCard](https://img.shields.io/badge/Status-In%20Development-yellow)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
+<!-- ![License](https://img.shields.io/badge/License-MIT-green) -->
 
 ## 🌟 Features
 
@@ -182,9 +182,9 @@ See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instructions to 
 **S.M. Mehedy Kawser**
 - GitHub: [github.com/mehedyk](https://github.com/mehedyk)
 
-## 📄 License
+<!-- ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. -->
 
 ## 🙏 Acknowledgments
 

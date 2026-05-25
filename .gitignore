@@ -46,3 +46,5 @@ prisma/*.db-journal
 .vscode/
 *.swp
 *.swo
+
+client_secret_553532452675-c4isp0ic8v0i1r5psverujjp5npimbk1.apps.googleusercontent.com.json
