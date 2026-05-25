@@ -40,6 +40,8 @@ model User {
   plan          PlanType  @default(ONE_TIME)
   planExpiresAt DateTime?
   emailVerified DateTime?
+  passwordResetToken  String?
+  passwordResetExpiry DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

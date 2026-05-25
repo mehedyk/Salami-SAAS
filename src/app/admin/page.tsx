@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -52,13 +52,7 @@ export default function AdminDashboardPage() {
     }
   }, [status, session, router]);
 
-  useEffect(() => {
-    if (status === "authenticated" && (session?.user?.role === "ADMIN" || session?.user?.role === "MODERATOR")) {
-      fetchData();
-    }
-  }, [status, session]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [statsRes, paymentsRes] = await Promise.all([
         fetch("/api/admin/stats"),
@@ -73,7 +67,13 @@ export default function AdminDashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (status === "authenticated" && (session?.user?.role === "ADMIN" || session?.user?.role === "MODERATOR")) {
+      fetchData();
+    }
+  }, [status, session, fetchData]);
 
   const handleApprovePayment = async (id: string, approve: boolean) => {
     setIsProcessing(id);
