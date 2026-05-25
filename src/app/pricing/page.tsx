@@ -108,7 +108,7 @@ export default function PricingPage() {
               <strong>1–12 hours</strong>.
             </p>
             <p className="text-sm text-muted-foreground">
-              You'll get a notification in your dashboard once it's approved.
+              You&apos;ll get a notification in your dashboard once it&apos;s approved.
             </p>
             <Button className="w-full" onClick={() => (window.location.href = "/dashboard")}>
               Go to Dashboard
