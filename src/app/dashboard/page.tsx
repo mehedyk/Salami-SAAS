@@ -47,12 +47,6 @@ export default function DashboardPage() {
     }
   }, [justCreated, addToast]);
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      fetchCards();
-    }
-  }, [status, fetchCards]);
-
   const fetchCards = useCallback(async () => {
     try {
       const res = await fetch("/api/cards");
@@ -64,6 +58,12 @@ export default function DashboardPage() {
       setIsLoading(false);
     }
   }, [addToast]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchCards();
+    }
+  }, [status, fetchCards]);
 
   const copyLink = (slug: string) => {
     const url = `${window.location.origin}/card/${slug}`;
