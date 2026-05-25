@@ -4,6 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { cardCreateSchema } from "@/lib/validation";
 import { generateSlug } from "@/lib/utils";
+// FIX: Import sanitizeInput so user-supplied text is stripped of any HTML/script
+// before it is written to the database and later rendered on card pages.
+import { sanitizeInput } from "@/lib/sanitize";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +26,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { eidType, theme, audio, phone, customMessage, recipientName } = validation.data;
+    const { eidType, theme, audio, phone, customMessage, recipientName } =
+      validation.data;
+
+    // FIX: Sanitize all free-text fields that come from the user.
+    // Zod validates length/format but does NOT strip HTML tags or scripts.
+    // sanitizeInput() runs DOMPurify with ALLOWED_TAGS:[] — strips everything.
+    const safeMessage = sanitizeInput(customMessage);
+    const safeName = recipientName ? sanitizeInput(recipientName) : recipientName;
 
     let slug = generateSlug();
     let existingSlug = await prisma.card.findUnique({ where: { slug } });
@@ -40,8 +50,8 @@ export async function POST(req: NextRequest) {
         theme,
         audio,
         phone,
-        customMessage,
-        recipientName,
+        customMessage: safeMessage,
+        recipientName: safeName,
         isPublished: true,
       },
     });

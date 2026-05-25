@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { renderTheme } from "@/components/themes";
 import { getRandomDuas } from "@/lib/duas";
 import { Footer } from "@/components/layout/footer";
+import CardShareBar from "./CardShareBar";
 
 interface PageProps {
   params: { slug: string };
@@ -13,13 +14,15 @@ export async function generateMetadata({ params }: PageProps) {
     where: { slug: params.slug, isPublished: true },
   });
 
-  if (!card) {
-    return { title: "Card Not Found" };
-  }
+  if (!card) return { title: "Card Not Found" };
 
   return {
-    title: `Eid Card from ${card.recipientName || "Someone"}`,
+    title: `Eid Mubarak from ${card.recipientName || "Someone Special"}`,
     description: card.customMessage,
+    openGraph: {
+      title: `Eid Mubarak! 🌙`,
+      description: card.customMessage,
+    },
   };
 }
 
@@ -28,9 +31,7 @@ export default async function CardPage({ params }: PageProps) {
     where: { slug: params.slug, isPublished: true, isActive: true },
   });
 
-  if (!card) {
-    notFound();
-  }
+  if (!card) notFound();
 
   const duas = getRandomDuas(card.eidType, 3);
 
@@ -44,6 +45,10 @@ export default async function CardPage({ params }: PageProps) {
         phone: card.phone,
         duas,
       })}
+
+      {/* Share bar — lets the recipient copy or share the card link */}
+      <CardShareBar slug={params.slug} />
+
       <Footer />
     </div>
   );
