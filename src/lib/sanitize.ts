@@ -14,14 +14,15 @@
 // Make sure jsdom is installed:  npm install jsdom @types/jsdom
 
 import DOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { JSDOM } = require("jsdom") as typeof import("jsdom");
 
 // Build a server-side DOMPurify instance once at module load.
 // This is safe — jsdom's window is stateless for DOMPurify's purposes.
 let purify: ReturnType<typeof DOMPurify>;
 try {
   const { window } = new JSDOM("");
-  purify = DOMPurify(window as unknown as Window);
+  purify = DOMPurify(window as unknown as typeof globalThis);
 } catch (err) {
   throw new Error(
     "[sanitize.ts] Failed to initialise DOMPurify with jsdom. " +
