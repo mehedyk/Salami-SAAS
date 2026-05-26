@@ -14,7 +14,6 @@
 // Make sure jsdom is installed:  npm install jsdom @types/jsdom
 
 import DOMPurify from "dompurify";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { JSDOM } = require("jsdom") as typeof import("jsdom");
 
 // Build a server-side DOMPurify instance once at module load.
