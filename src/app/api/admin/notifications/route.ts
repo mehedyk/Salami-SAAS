@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (type === "ALL_USERS") {
       const users = await prisma.user.findMany({ select: { id: true } });
       await prisma.notification.createMany({
-        data: users.map((u) => ({
+        data: users.map((u: { id: string }) => ({
           userId: u.id,
           type: "BROADCAST",
           title,

@@ -34,7 +34,7 @@ export async function POST(
     }
 
     // Start a transaction to update payment request and user plan
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: typeof prisma) => {
       const updatedRequest = await tx.paymentRequest.update({
         where: { id: params.id },
         data: {
