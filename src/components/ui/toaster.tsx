@@ -8,7 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast";
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, ReactNode } from "react";
 
 type ToastType = {
   id: string;
@@ -33,7 +33,7 @@ export function useToast() {
   return context;
 }
 
-export function Toaster() {
+export function Toaster({ children }: { children?: ReactNode }) {
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
   const addToast = (toast: Omit<ToastType, "id">) => {
@@ -50,6 +50,7 @@ export function Toaster() {
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+      {children}
       <ToastProvider>
         {toasts.map((toast) => (
           <Toast

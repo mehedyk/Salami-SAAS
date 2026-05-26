@@ -1,92 +1,40 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Footer } from "@/components/layout/footer";
-import { useToast } from "@/components/ui/toaster";
-import { Plus, Copy, ExternalLink, Edit, Trash2, Loader2, Crown } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { themes } from "@/components/themes";
+import { useToast } from "@/components/ui/toaster";
+import { Loader2, ArrowLeft, ArrowRight, Check, Moon, Sun } from "lucide-react";
 
-interface Card {
-  id: string;
-  slug: string;
-  eidType: string;
-  theme: string;
-  isPublished: boolean;
-  viewCount: number;
-  createdAt: string;
-}
+const audioOptions = [
+  { id: "audio1", name: "Islamic Nasheed", emoji: "🎵" },
+  { id: "audio2", name: "Traditional Darbar", emoji: "🥁" },
+  { id: "audio3", name: "Soft Ambient", emoji: "🌙" },
+  { id: "audio4", name: "Quranic Recitation", emoji: "📖" },
+];
 
-export default function DashboardPage() {
-  const { data: session, status } = useSession();
+export default function CardCreatePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const { addToast } = useToast();
-  const [cards, setCards] = useState<Card[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const justCreated = searchParams.get("created");
+  const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    eidType: "",
+    theme: "",
+    audio: "",
+    phone: "",
+    customMessage: "",
+    recipientName: "",
+  });
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    if (justCreated) {
-      addToast({
-        title: "Card Created! 🎉",
-        description: "Your Eid card is ready to share with the world.",
-      });
-    }
-  }, [justCreated, addToast]);
-
-  const fetchCards = useCallback(async () => {
-    try {
-      const res = await fetch("/api/cards");
-      const data = await res.json();
-      setCards(data);
-    } catch (error) {
-      addToast({ title: "Error", description: "Failed to load cards", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [addToast]);
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      fetchCards();
-    }
-  }, [status, fetchCards]);
-
-  const copyLink = (slug: string) => {
-    const url = `${window.location.origin}/card/${slug}`;
-    navigator.clipboard.writeText(url);
-    addToast({ title: "Link Copied!", description: "Share this link with your loved ones." });
-  };
-
-  const deleteCard = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this card?")) return;
-    setDeletingId(id);
-
-    try {
-      await fetch(`/api/cards/${id}`, { method: "DELETE" });
-      setCards(cards.filter((c) => c.id !== id));
-      addToast({ title: "Card Deleted" });
-    } catch (error) {
-      addToast({ title: "Error", description: "Failed to delete card", variant: "destructive" });
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  if (status === "loading" || isLoading) {
+  if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -94,125 +42,247 @@ export default function DashboardPage() {
     );
   }
 
-  const isPremium = session?.user?.plan === "PREMIUM";
+  if (!session) {
+    router.push("/login");
+    return null;
+  }
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        addToast({
+          title: "Error",
+          description: data.error || "Failed to create card",
+          variant: "destructive",
+        });
+      } else {
+        addToast({
+          title: "Card Created!",
+          description: "Your card is ready to share.",
+        });
+        router.push(`/dashboard?created=${data.slug}`);
+      }
+    } catch (error) {
+      addToast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <CardHeader className="text-center px-0">
+              <CardTitle className="text-2xl">Choose Eid Type</CardTitle>
+              <CardDescription>Select the type of Eid card you want to create</CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                onClick={() => setFormData({ ...formData, eidType: "eid_al_fitr" })}
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  formData.eidType === "eid_al_fitr"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <Moon className="w-12 h-12 mx-auto mb-3 text-primary" />
+                <h3 className="text-lg font-semibold">Eid Al-Fitr</h3>
+                <p className="text-sm text-muted-foreground">Celebrate the end of Ramadan</p>
+              </button>
+              <button
+                onClick={() => setFormData({ ...formData, eidType: "eid_al_adha" })}
+                className={`p-6 rounded-lg border-2 transition-all ${
+                  formData.eidType === "eid_al_adha"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <Sun className="w-12 h-12 mx-auto mb-3 text-primary" />
+                <h3 className="text-lg font-semibold">Eid Al-Adha</h3>
+                <p className="text-sm text-muted-foreground">Celebrate the festival of sacrifice</p>
+              </button>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <CardHeader className="text-center px-0">
+              <CardTitle className="text-2xl">Choose Theme</CardTitle>
+              <CardDescription>Pick a beautiful theme for your Eid card</CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {themes.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setFormData({ ...formData, theme: theme.id })}
+                  className={`p-4 rounded-lg border-2 transition-all text-center ${
+                    formData.theme === theme.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{theme.preview}</div>
+                  <p className="text-xs font-medium">{theme.name}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <CardHeader className="text-center px-0">
+              <CardTitle className="text-2xl">Choose Audio</CardTitle>
+              <CardDescription>Add background music to your card</CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {audioOptions.map((audio) => (
+                <button
+                  key={audio.id}
+                  onClick={() => setFormData({ ...formData, audio: audio.id })}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    formData.audio === audio.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{audio.emoji}</div>
+                  <p className="text-sm font-medium">{audio.name}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <CardHeader className="text-center px-0">
+              <CardTitle className="text-2xl">Your Details</CardTitle>
+              <CardDescription>Enter your message and contact info</CardDescription>
+            </CardHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="recipientName">Recipient Name (Optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Who is this card for?"
+                  value={formData.recipientName}
+                  onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Your Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+880 1XXX XXXXXX"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customMessage">Your Message</Label>
+                <textarea
+                  id="customMessage"
+                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Write your Eid wishes here..."
+                  value={formData.customMessage}
+                  onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const canProceed = () => {
+    switch (step) {
+      case 1:
+        return !!formData.eidType;
+      case 2:
+        return !!formData.theme;
+      case 3:
+        return !!formData.audio;
+      case 4:
+        return !!formData.phone && !!formData.customMessage;
+      default:
+        return false;
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-background">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary">EidCard</Link>
-          <div className="flex items-center gap-4">
-            {isPremium && (
-              <span className="flex items-center gap-1 text-sm text-primary">
-                <Crown className="w-4 h-4" /> Premium
-              </span>
-            )}
-            <Link href="/dashboard/card/create">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Card
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background py-12">
+      <div className="container mx-auto px-4 max-w-3xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome, {session?.user?.name || "User"}</h1>
-          <p className="text-muted-foreground">
-            {cards.length === 0
-              ? "You haven't created any cards yet."
-              : `You have ${cards.length} card${cards.length > 1 ? "s" : ""}`}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  s <= step ? "bg-primary" : "bg-muted"
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            Step {step} of 4
           </p>
         </div>
 
-        {!isPremium && (
-          <Card className="mb-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-            <CardContent className="py-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">Upgrade to Premium</h3>
-                  <p className="text-sm text-muted-foreground">Unlimited cards, lifetime access, and more features.</p>
-                </div>
-                <Link href="/pricing">
-                  <Button>Upgrade Now - 99 TK</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Card>{renderStep()}</Card>
 
-        {cards.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <div className="text-6xl mb-4">🎉</div>
-              <h2 className="text-2xl font-bold mb-2">Create Your First Eid Card</h2>
-              <p className="text-muted-foreground mb-6">Spread the joy of Eid with your loved ones</p>
-              <Link href="/dashboard/card/create">
-                <Button size="lg">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Card
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cards.map((card) => (
-              <Card key={card.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      {card.eidType === "eid_al_fitr" ? "Eid Al-Fitr" : "Eid Al-Adha"}
-                    </CardTitle>
-                    <span className="text-sm text-muted-foreground">
-                      {card.viewCount} views
-                    </span>
-                  </div>
-                  <CardDescription>
-                    Theme: {card.theme} • Created {new Date(card.createdAt).toLocaleDateString()}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => copyLink(card.slug)}
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy Link
-                    </Button>
-                    <Link href={`/card/${card.slug}`} target="_blank">
-                      <Button size="sm" variant="outline">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View
-                      </Button>
-                    </Link>
-                    {isPremium && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => deleteCard(card.id)}
-                        disabled={deletingId === card.id}
-                      >
-                        {deletingId === card.id ? (
-                          <Loader2 className="w-4 h-4" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </main>
+        <div className="flex justify-between mt-6">
+          <Button
+            variant="outline"
+            onClick={() => step > 1 && setStep(step - 1)}
+            disabled={step === 1}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
 
-      <Footer />
+          {step < 4 ? (
+            <Button
+              onClick={() => setStep(step + 1)}
+              disabled={!canProceed()}
+            >
+              Next
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} disabled={!canProceed() || isLoading}>
+              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Create Card
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
