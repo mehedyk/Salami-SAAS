@@ -882,7 +882,7 @@ export default function CardCreatePage() {
 
   // Redirect if not authed
   useEffect(() => {
-    if (status === "unauthenticated") router.push("/auth/login");
+    if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
 
   const canProceed = useMemo(() => {

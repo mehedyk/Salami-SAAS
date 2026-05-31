@@ -45,7 +45,7 @@ export default function CardFooter() {
 
         {/* CTA */}
         <Link
-          href="/auth/register"
+          href="/register"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full
                      bg-amber-400/15 border border-amber-400/25 text-amber-300
                      font-body text-xs font-semibold

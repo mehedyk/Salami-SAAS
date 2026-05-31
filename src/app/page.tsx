@@ -155,11 +155,11 @@ function Navbar() {
 
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/auth/login"
+          <Link href="/login"
                 className="text-sm font-medium text-white/70 hover:text-white transition-colors px-3 py-1.5">
             Sign In
           </Link>
-          <Link href="/auth/register"
+          <Link href="/register"
                 className="btn-primary btn-morph text-sm px-5 py-2 rounded-xl">
             Get Started <ArrowRight className="w-4 h-4" />
           </Link>
@@ -184,12 +184,12 @@ function Navbar() {
             </a>
           ))}
           <div className="border-t border-white/10 mt-3 pt-3 flex flex-col gap-2">
-            <Link href="/auth/login"
+            <Link href="/login"
                   className="block text-center py-2.5 px-4 text-white/70 hover:text-white
                              rounded-xl border border-white/10 hover:border-white/30 transition-all">
               Sign In
             </Link>
-            <Link href="/auth/register"
+            <Link href="/register"
                   className="btn-primary text-center rounded-xl py-2.5">
               Get Started
             </Link>
@@ -271,7 +271,7 @@ function HeroSection() {
 
       {/* CTAs */}
       <div className={`flex flex-col sm:flex-row gap-4 mt-10 transition-all duration-700 delay-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-        <Link href="/auth/register"
+        <Link href="/register"
               className="btn-primary btn-morph px-8 py-4 text-base rounded-2xl shadow-glow-gold group">
           Create Your Card Free
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -537,7 +537,7 @@ function HowItWorksSection() {
         {/* CTA below steps */}
         <div className={`text-center mt-12 transition-all duration-700 delay-500
                          ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <Link href="/auth/register"
+          <Link href="/register"
                 className="btn-primary btn-morph px-10 py-4 text-lg rounded-2xl inline-flex shadow-glow-gold">
             Start Creating — It&apos;s Free
             <Sparkles className="w-5 h-5" />
@@ -648,7 +648,7 @@ function PricingSection() {
         "Valid for 11 months",
       ],
       cta: "Get Started",
-      href: "/auth/register",
+      href: "/register",
       highlight: false,
     },
     {
@@ -665,7 +665,7 @@ function PricingSection() {
         "Early access to new themes",
       ],
       cta: "Go Premium",
-      href: "/auth/register",
+      href: "/register",
       highlight: true,
     },
   ];
@@ -795,12 +795,12 @@ function CtaSection() {
             Start free — your first card is on us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/register"
+            <Link href="/register"
                   className="btn-primary btn-morph px-10 py-4 text-lg rounded-2xl shadow-glow-gold group">
               Create Your Card Now
               <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             </Link>
-            <Link href="/auth/login"
+            <Link href="/login"
                   className="btn-glass px-10 py-4 text-lg rounded-2xl text-white border-white/20">
               Sign In
             </Link>
@@ -846,7 +846,7 @@ function Footer() {
           <div>
             <h4 className="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">Account</h4>
             <ul className="space-y-2">
-              {[["Sign In","/auth/login"],["Register","/auth/register"],["Dashboard","/dashboard"]].map(([l, h]) => (
+              {[["Sign In","/login"],["Register","/register"],["Dashboard","/dashboard"]].map(([l, h]) => (
                 <li key={l}>
                   <Link href={h} className="font-body text-sm text-white/40 hover:text-white transition-colors">{l}</Link>
                 </li>

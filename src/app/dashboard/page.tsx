@@ -668,7 +668,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (status === "unauthenticated") router.push("/auth/login");
+    if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
 
   const fetchDashboard = useCallback(async (silent = false) => {
