@@ -223,7 +223,7 @@ export function Navbar() {
             ) : (
               <>
                 <Link
-                  href="/(auth)/login"
+                  href="/login"
                   className="px-4 py-2 text-sm font-body font-medium text-white/65
                              hover:text-white transition-colors duration-200 rounded-xl
                              hover:bg-white/5"
@@ -231,7 +231,7 @@ export function Navbar() {
                   Sign In
                 </Link>
                 <Link
-                  href="/(auth)/register"
+                  href="/register"
                   className="btn-primary btn-morph rounded-xl px-5 py-2.5 text-sm shadow-glow-gold
                              flex items-center gap-2"
                 >
@@ -331,7 +331,7 @@ export function Navbar() {
               ) : (
                 <>
                   <Link
-                    href="/(auth)/login"
+                    href="/login"
                     onClick={() => setOpen(false)}
                     className="flex items-center justify-center px-4 py-3 rounded-xl text-sm font-body
                                font-medium text-white/70 hover:text-white border border-white/10
@@ -340,7 +340,7 @@ export function Navbar() {
                     Sign In
                   </Link>
                   <Link
-                    href="/(auth)/register"
+                    href="/register"
                     onClick={() => setOpen(false)}
                     className="btn-primary w-full text-center rounded-xl py-3 text-sm block"
                   >

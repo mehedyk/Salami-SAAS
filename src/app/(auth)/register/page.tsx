@@ -118,7 +118,7 @@ export default function RegisterPage() {
         router.push("/dashboard");
       } else {
         addToast({ title: "Account created!", description: "Please sign in to continue." });
-        router.push("/(auth)/login");
+        router.push("/login");
       }
     } catch {
       addToast({ title: "Network error", description: "Check your connection and try again.", variant: "destructive" });
@@ -331,7 +331,7 @@ export default function RegisterPage() {
         <p className="text-center font-body text-sm text-white/40 mt-6">
           Already have an account?{" "}
           <Link
-            href="/(auth)/login"
+            href="/login"
             className="text-amber-400 hover:text-amber-300 font-semibold transition-colors"
           >
             Sign in
