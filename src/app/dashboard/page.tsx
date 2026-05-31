@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  useState, useEffect, useCallback, useRef,
+  useState, useEffect, useCallback, useRef, Suspense,
 } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -631,10 +631,27 @@ function useReveal() {
   }, []);
 }
 
+// ─── Inner component that uses useSearchParams (must be inside Suspense) ──────
+function DashboardSearchParamsHandler({ mounted, addToast }: { mounted: boolean; addToast: ReturnType<typeof useToast>["addToast"] }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const created = searchParams.get("created");
+    if (created && mounted) {
+      addToast({
+        title: "Card created! 🎉",
+        description: "Your Eid card is live and ready to share.",
+      });
+      window.history.replaceState({}, "", "/dashboard");
+    }
+  }, [searchParams, mounted, addToast]);
+
+  return null;
+}
+
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const router        = useRouter();
-  const searchParams  = useSearchParams();
   const { data: session, status } = useSession();
   const { addToast }  = useToast();
 
@@ -684,19 +701,6 @@ export default function DashboardPage() {
       fetchPaymentStatus();
     }
   }, [status, fetchDashboard, fetchPaymentStatus]);
-
-  // Show confetti toast when arriving from card creation
-  useEffect(() => {
-    const created = searchParams.get("created");
-    if (created && mounted) {
-      addToast({
-        title: "Card created! 🎉",
-        description: "Your Eid card is live and ready to share.",
-      });
-      // Clean URL without re-render
-      window.history.replaceState({}, "", "/dashboard");
-    }
-  }, [searchParams, mounted, addToast]);
 
   // Re-run reveal after data loads
   useEffect(() => {
@@ -751,6 +755,11 @@ export default function DashboardPage() {
 
   return (
     <>
+      {/* Search params handler — must be in Suspense for static rendering */}
+      <Suspense fallback={null}>
+        <DashboardSearchParamsHandler mounted={mounted} addToast={addToast} />
+      </Suspense>
+
       {/* Delete confirmation modal */}
       {deleteTarget && (
         <DeleteModal
