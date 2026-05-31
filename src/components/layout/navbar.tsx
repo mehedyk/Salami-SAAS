@@ -29,12 +29,12 @@ export function Navbar() {
   // Hide navbar entirely on card pages and dashboard (they have their own headers)
   const isCardPage      = pathname.startsWith("/card/");
   const isDashboardPage = pathname.startsWith("/dashboard");
-  if (isCardPage || isDashboardPage) return null;
 
   const isHomePage = pathname === "/";
 
-  // Scroll effects
+  // Scroll effects — hooks must always run, regardless of early return
   useEffect(() => {
+    if (isCardPage || isDashboardPage) return;
     const onScroll = () => {
       const el  = document.documentElement;
       const pct = (el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)) * 100;
@@ -43,10 +43,11 @@ export function Navbar() {
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isCardPage, isDashboardPage]);
 
   // Close user menu on outside click
   useEffect(() => {
+    if (isCardPage || isDashboardPage) return;
     const handler = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserMenuOpen(false);
@@ -54,10 +55,13 @@ export function Navbar() {
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [isCardPage, isDashboardPage]);
 
   // Close mobile menu on route change
   useEffect(() => { setOpen(false); }, [pathname]);
+
+  // Early return after all hooks
+  if (isCardPage || isDashboardPage) return null;
 
   const userName   = session?.user?.name?.split(" ")[0] ?? "Account";
   const userInitial = (session?.user?.name?.[0] ?? session?.user?.email?.[0] ?? "U").toUpperCase();
