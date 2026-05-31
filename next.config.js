@@ -2,6 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  async redirects() {
+    return [
+      // (auth) is a Next.js route group — the folder name is stripped from
+      // the URL. Redirect legacy /auth/* paths to the correct locations.
+      { source: "/auth/login",           destination: "/login",           permanent: true },
+      { source: "/auth/register",        destination: "/register",        permanent: true },
+      { source: "/auth/forgot-password", destination: "/forgot-password", permanent: true },
+    ];
+  },
+
   images: {
     // FIX: Removed the wildcard hostname: '**' pattern.
     // Allowing images from ANY https domain is a security risk — it can be
