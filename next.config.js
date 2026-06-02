@@ -62,10 +62,10 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-              "style-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https://lh3.googleusercontent.com https://avatars.githubusercontent.com",
-              "font-src 'self'",
-              "connect-src 'self'",
+              "font-src 'self' https://fonts.gstatic.com",
+              "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://openidconnect.googleapis.com",
               "frame-ancestors 'none'",
             ].join("; "),
           },

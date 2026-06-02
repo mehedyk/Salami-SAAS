@@ -1,9 +1,9 @@
 // src/app/(auth)/login/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useToast } from "@/components/ui/toaster";
 import {
@@ -11,8 +11,9 @@ import {
   Mail, Lock, Sparkles,
 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginInner() {
   const router         = useRouter();
+  const searchParams   = useSearchParams();
   const { addToast }   = useToast();
   const [mounted, setMounted]           = useState(false);
   const [isLoading, setIsLoading]       = useState(false);
@@ -21,6 +22,22 @@ export default function LoginPage() {
   const [errors, setErrors]             = useState<Record<string, string>>({});
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
+
+  // Show meaningful error when NextAuth redirects back with ?error=
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (!err) return;
+    const msg =
+      err === "OAuthAccountNotLinked"
+        ? "This email is linked to a different sign-in method. Try Google or use your password."
+        : err === "CredentialsSignin"
+        ? "Invalid email or password."
+        : "Sign-in failed. Please try again.";
+    addToast({ title: "Sign-in error", description: msg, variant: "destructive" });
+    // Clean up the URL
+    window.history.replaceState({}, "", "/login");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -218,5 +235,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
   );
 }
