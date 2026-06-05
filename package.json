@@ -1,12 +1,14 @@
 {
-  "name": "salami-saas",
-  "version": "0.1.0",
+  "name": "eidcard",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
     "postinstall": "prisma generate"
   },
   "dependencies": {

@@ -1,179 +1,182 @@
-# Deployment Guide
+# 🌙 EidCard — Deployment Guide
 
-This guide will help you deploy EidCard to Vercel for production.
+## Why Login Was Failing
 
-## Prerequisites
+The "Sign-in failed. Please try again." error had **two root causes**:
 
-- GitHub account
-- Vercel account (free tier works)
-- MongoDB Atlas cluster (free tier works)
-- All environment variables ready
+1. **`NEXTAUTH_SECRET` missing or wrong** — Without a secret, NextAuth can't sign JWTs. Every `signIn()` call silently fails.
+2. **`NEXTAUTH_URL` mismatch** — NextAuth uses this for CSRF validation. If it doesn't match the actual request origin, credentials sign-in returns an error.
 
-## Step 1: Push to GitHub
+The LaunchDarkly errors in the console were **not** causing the login failure — those are just an ad-blocker blocking analytics pings. Ignore them.
+
+---
+
+## Quick Start (Local Dev)
 
 ```bash
-cd eid-card-saas
+# 1. Install dependencies
+npm install
+
+# 2. Copy env file
+cp .env.example .env.local
+# Fill in your values (MongoDB URI, NextAuth secret, etc.)
+
+# 3. Push Prisma schema to MongoDB
+npx prisma db push
+
+# 4. Generate Prisma client
+npx prisma generate
+
+# 5. Run dev server
+npm run dev
+# → Open http://localhost:3000
+```
+
+---
+
+## Deploy to Vercel
+
+### Step 1 — Push code to GitHub
+```bash
 git init
 git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/yourusername/eid-card-saas.git
+git commit -m "Initial EidCard rebuild"
+git remote add origin https://github.com/<your-username>/<repo>.git
 git push -u origin main
 ```
 
-## Step 2: Create Vercel Project
+### Step 2 — Import on Vercel
+1. Go to https://vercel.com/new
+2. Import your GitHub repository
+3. Framework: **Next.js** (auto-detected)
+4. Build command: `prisma generate && next build`
 
-1. Go to [vercel.com](https://vercel.com)
-2. Log in with your GitHub account
-3. Click "New Project"
-4. Import your `eid-card-saas` repository
-5. Click "Deploy"
+### Step 3 — Set Environment Variables
+In Vercel → Project → Settings → Environment Variables, add **all** of these:
 
-## Step 3: Configure Environment Variables
+| Variable | Value |
+|---|---|
+| `MONGODB_URI` | Your MongoDB Atlas URI |
+| `NEXTAUTH_URL` | `https://salami-saas.vercel.app` (**exact URL, no trailing slash**) |
+| `NEXTAUTH_SECRET` | Run `openssl rand -base64 32` and paste the output |
+| `GOOGLE_CLIENT_ID` | From Google Cloud Console |
+| `GOOGLE_CLIENT_SECRET` | From Google Cloud Console |
+| `NEXT_PUBLIC_APP_URL` | `https://salami-saas.vercel.app` |
+| `NEXT_PUBLIC_BKASH_NUMBER` | Your bKash number |
 
-In Vercel dashboard, go to Settings → Environment Variables and add:
+### Step 4 — MongoDB Atlas Setup
+1. Log in to https://cloud.mongodb.com
+2. Go to **Network Access** → Add IP Address → `0.0.0.0/0` (allow anywhere — needed for Vercel serverless)
+3. Create a database user with read/write permissions
+4. Copy the connection string into `MONGODB_URI`
 
-```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/eid-card-saas
-NEXTAUTH_URL=https://your-domain.vercel.app
-NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
-BKASH_API_URL=https://tokenized.bka.sh/v1.2.0
-BKASH_USERNAME=your-bkash-username
-BKASH_PASSWORD=your-bkash-password
-BKASH_APP_KEY=your-bkash-app-key
-BKASH_APP_SECRET=your-bkash-app-secret
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-```
+### Step 5 — Google OAuth Setup
+1. Go to https://console.cloud.google.com
+2. Create a new project (or use existing)
+3. Go to **APIs & Services → Credentials → Create Credentials → OAuth 2.0 Client ID**
+4. Application type: **Web application**
+5. Authorised redirect URIs:
+   - `https://salami-saas.vercel.app/api/auth/callback/google`
+   - `http://localhost:3000/api/auth/callback/google` (for local dev)
+6. Copy Client ID and Secret to Vercel env vars
 
-## Step 4: Generate NEXTAUTH_SECRET
+### Step 6 — Deploy
+Click **Deploy** in Vercel. First deploy runs `prisma generate && next build`.
+
+---
+
+## Create Your First Admin User
+
+After deploying, register a normal user at `/register`, then:
 
 ```bash
-# On Linux/Mac
-openssl rand -base64 32
-
-# Or use online generator: https://generate-secret.vercel.app/32
+# Using MongoDB Atlas Data Browser, or mongosh:
+db.users.updateOne(
+  { email: "your@email.com" },
+  { $set: { role: "ADMIN" } }
+)
 ```
 
-## Step 5: Configure MongoDB Atlas
+Now visit `/admin` to access the admin panel.
 
-1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Create a database user
-3. Whitelist IP `0.0.0.0/0` (for Vercel access)
-4. Get connection string from "Connect" → "Connect your application"
-5. Replace `<password>` with your database user password
+---
 
-## Step 6: Configure Google OAuth
+## Project Structure
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a new project
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `https://your-domain.vercel.app/api/auth/callback/google`
-
-## Step 7: Configure Resend (Email)
-
-1. Sign up at [resend.com](https://resend.com)
-2. Create an API key
-3. Verify your domain or use their test endpoint
-
-## Step 8: Configure bKash (Payment)
-
-1. Contact bKash for merchant account
-2. Get API credentials
-3. Note: bKash sandbox available for testing
-
-## Step 9: Update NEXTAUTH_URL
-
-After deployment, update:
-- `NEXTAUTH_URL` to your Vercel domain
-- Google OAuth redirect URI
-- `NEXT_PUBLIC_APP_URL`
-
-## Step 10: Rebuild Prisma Client
-
-Add to your `package.json`:
-
-```json
-"scripts": {
-  "postinstall": "prisma generate"
-}
+```
+eidcard/
+├── prisma/schema.prisma          # MongoDB schema
+├── src/
+│   ├── app/
+│   │   ├── (auth)/               # Login, Register, Forgot-password
+│   │   ├── api/                  # All API routes
+│   │   ├── card/[slug]/          # Public card view
+│   │   ├── dashboard/            # User dashboard + card create
+│   │   ├── admin/                # Admin panel
+│   │   ├── globals.css           # SINGLE CSS file — no CSS modules
+│   │   └── page.tsx              # Landing page
+│   ├── components/
+│   │   ├── themes/index.tsx      # ALL 10 themes — single file, no CSS modules
+│   │   ├── ui/                   # Button, Input, Label, Card, Toaster
+│   │   └── providers/            # NextAuth SessionProvider wrapper
+│   └── lib/
+│       ├── auth.ts               # NextAuth config
+│       ├── db.ts                 # Prisma client singleton
+│       ├── duas/                 # Islamic duas library
+│       ├── validation.ts         # Zod schemas
+│       ├── sanitize.ts           # DOMPurify server-side
+│       ├── utils.ts              # cn(), generateSlug(), etc.
+│       └── bkash.ts              # bKash helpers
+├── .env.example                  # Copy → .env.local
+├── tailwind.config.ts            # Full design system with custom tokens
+└── vercel.json                   # Build config
 ```
 
-Vercel automatically runs this after installing dependencies.
+---
 
-## Custom Domain (Optional)
+## What Was Rebuilt & Why
 
-1. In Vercel dashboard → Domains
-2. Add your custom domain
-3. Update DNS records as instructed
-4. Update `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL`
+| Before | After | Why |
+|---|---|---|
+| 10 CSS module files | 1 `themes/index.tsx` | Eliminates CSS specificity fights |
+| CSS Modules + Tailwind mix | Pure Tailwind + CSS custom props | Single cascade, zero conflicts |
+| Generic error "Sign-in failed" | Specific error messages | Better UX, easier debugging |
+| No password strength UI | Live password strength meter | Security awareness |
+| Scattered keyframes in CSS modules | All animations in `tailwind.config.ts` | One source of truth |
+| Hard-coded font imports | CSS variable-based font system | Theme-safe, no FOUT |
+| Mixed `className` and `style` in themes | Inline styles via JS config object | Type-safe, no CSS leakage |
+
+---
 
 ## Troubleshooting
 
-### Build Failures
+**Login still failing after deploying?**
+1. Check Vercel logs → Functions → `/api/auth/[...nextauth]`
+2. Verify `NEXTAUTH_URL` matches exactly (no trailing slash, correct protocol)
+3. Verify `NEXTAUTH_SECRET` is set and non-empty
+4. Check MongoDB Atlas Network Access allows `0.0.0.0/0`
 
-```bash
-# Run locally first
-npm run build
-```
+**Cards showing 404?**
+- Cards need `isPublished: true` in the DB. The new card creation API always sets this.
 
-### Database Connection Issues
+**Google OAuth not working?**
+- Check the redirect URI in Google Cloud Console matches your domain exactly
+- Make sure `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set in Vercel
 
-- Check MongoDB Atlas IP whitelist
-- Verify connection string format
-- Ensure database user has correct permissions
+**Prisma generate failing?**
+- Run `npx prisma generate` locally first to verify schema is valid
+- Check `MONGODB_URI` is set correctly
 
-### Authentication Issues
+---
 
-- Verify `NEXTAUTH_URL` matches exactly (including https://)
-- Check Google OAuth redirect URIs
-- Ensure `NEXTAUTH_SECRET` is set
+## Adding a Logo / Favicon
 
-### API Route Errors
-
-- Check environment variables are set in Vercel
-- Verify all required env vars are present
-- Check Vercel function logs for errors
-
-## Useful Vercel Commands
-
-```bash
-# View logs
-vercel logs your-project
-
-# Pull environment variables
-vercel env pull .env.local
-
-# Deploy to production
-vercel --prod
-```
-
-## Performance Optimization
-
-- Enable Vercel Analytics
-- Use Vercel Image Optimization for images
-- Configure caching headers in `next.config.js`
-- Enable gzip compression (automatic on Vercel)
-
-## Security Checklist
-
-- [ ] All environment variables set in Vercel
-- [ ] `NEXTAUTH_SECRET` is strong and unique
-- [ ] MongoDB Atlas IP whitelist configured
-- [ ] Google OAuth redirect URIs correct
-- [ ] HTTPS enabled (automatic on Vercel)
-- [ ] No sensitive data in client-side code
-
-## Monitoring
-
-- Enable Vercel Analytics for traffic insights
-- Set up MongoDB Atlas monitoring alerts
-- Configure Resend usage alerts
-- Monitor bKash transaction logs
-
-## Support
-
-For issues, open a GitHub issue or contact support.
+1. Replace `/public/favicon.ico` with your favicon
+2. Add `icon.png`, `apple-icon.png` to `/public`
+3. Update `/src/app/layout.tsx` metadata icons field:
+   ```ts
+   icons: {
+     icon: "/favicon.ico",
+     apple: "/apple-icon.png",
+   }
+   ```

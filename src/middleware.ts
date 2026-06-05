@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Rate limiter is optional — only initialised when Upstash env vars are present.
+// Rate limiter — only initialised when Upstash env vars are present.
 // Without them the middleware still applies security headers but skips rate limiting.
 let ratelimit: import("@upstash/ratelimit").Ratelimit | null = null;
 
@@ -27,13 +27,13 @@ const SECURITY_HEADERS: Record<string, string> = {
   "X-Frame-Options":        "DENY",
   "X-XSS-Protection":       "1; mode=block",
   "Referrer-Policy":        "strict-origin-when-cross-origin",
+  "Permissions-Policy":     "camera=(), microphone=(), geolocation=()",
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https://lh3.googleusercontent.com https://avatars.githubusercontent.com",
     "font-src 'self' https://fonts.gstatic.com",
-    // Allow same-origin + Google OAuth + NextAuth callbacks
     "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://openidconnect.googleapis.com",
     "frame-ancestors 'none'",
   ].join("; "),
@@ -45,7 +45,6 @@ export async function middleware(request: NextRequest) {
     request.headers.get("cf-connecting-ip") ||
     "unknown";
 
-  // Only rate-limit when Upstash is configured
   if (ratelimit) {
     try {
       const { success, limit, remaining, reset } = await ratelimit.limit(ip);
@@ -65,7 +64,7 @@ export async function middleware(request: NextRequest) {
         );
       }
     } catch {
-      // If Redis is unreachable, fail open (don't block legitimate traffic)
+      // Redis unreachable — fail open (don't block legitimate traffic)
     }
   }
 
@@ -77,10 +76,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Rate-limit & secure all API routes EXCEPT NextAuth's own endpoints.
-    // NextAuth makes multiple internal sub-requests; rate-limiting them breaks
-    // sign-in, sign-out, and session refresh.
-    "/api/((?!auth/).*)",
-  ],
+  matcher: ["/api/((?!auth/).*)"],
 };

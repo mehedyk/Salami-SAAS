@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, DM_Sans, Amiri, JetBrains_Mono } from "next/font/google";
+import {
+  Playfair_Display,
+  DM_Sans,
+  Amiri,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/components/providers/auth-provider";
 
-/* ── Fonts ───────────────────────────────────────────────────────────────── */
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "600", "700", "800"],
@@ -40,14 +44,13 @@ const jetbrains = JetBrains_Mono({
   preload: false,
 });
 
-/* ── Metadata ─────────────────────────────────────────────────────────────── */
 export const metadata: Metadata = {
   title: {
     default: "EidCard — Share the Joy of Eid",
     template: "%s | EidCard",
   },
   description:
-    "Create beautiful, personalised Eid greeting cards and share them with your loved ones. Choose from 10 stunning themes, add custom messages, and spread the joy of Eid.",
+    "Create beautiful, personalised Eid greeting cards in seconds. Choose from 10 stunning themes, add a heartfelt message, and share a magical link with anyone.",
   keywords: [
     "Eid card", "Eid greeting", "Eid Mubarak", "Eid al-Fitr", "Eid al-Adha",
     "Islamic greeting", "Bangladesh", "digital Eid card", "free Eid card",
@@ -55,7 +58,7 @@ export const metadata: Metadata = {
   authors: [{ name: "EidCard" }],
   creator: "EidCard",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://eidcard.vercel.app"
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://salami-saas.vercel.app"
   ),
   openGraph: {
     title: "EidCard — Share the Joy of Eid",
@@ -86,7 +89,6 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-/* ── Root Layout ──────────────────────────────────────────────────────────── */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
