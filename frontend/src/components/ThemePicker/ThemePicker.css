@@ -1,0 +1,104 @@
+.theme-picker__grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap:                   var(--space-4);
+}
+
+.theme-card {
+  display:        flex;
+  flex-direction: column;
+  background:     var(--surface-elevated);
+  border:         2px solid var(--surface-border);
+  border-radius:  var(--radius-lg);
+  overflow:       hidden;
+  cursor:         pointer;
+  transition:     border-color var(--duration-base) var(--ease-default),
+                  transform    var(--duration-base) var(--ease-spring),
+                  box-shadow   var(--duration-base);
+  text-align:     left;
+}
+
+.theme-card:hover:not(.theme-card--locked) {
+  border-color: rgba(245,158,11,0.4);
+  transform:    translateY(-2px);
+  box-shadow:   var(--shadow-gold);
+}
+
+.theme-card--selected {
+  border-color: var(--color-gold-500);
+  box-shadow:   0 0 0 1px var(--color-gold-500), var(--shadow-gold);
+}
+
+.theme-card--locked {
+  opacity: 0.65;
+  cursor:  pointer;   /* still clickable to trigger upgrade */
+}
+
+.theme-card--locked:hover {
+  border-color: rgba(148,163,184,0.3);
+  transform:    none;
+  box-shadow:   none;
+}
+
+/* ── Swatch ── */
+.theme-card__swatch {
+  height:          80px;
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+
+.theme-card__lock,
+.theme-card__check {
+  position:        absolute;
+  top:             50%;
+  left:            50%;
+  transform:       translate(-50%, -50%);
+  font-size:       1.4rem;
+  filter:          drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.theme-card__check {
+  background:    rgba(245,158,11,0.9);
+  color:         #0a0a0a;
+  font-weight:   900;
+  font-size:     1rem;
+  border-radius: 50%;
+  width:         28px;
+  height:        28px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+}
+
+/* ── Info ── */
+.theme-card__info {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.theme-card__names {
+  display:     flex;
+  align-items: baseline;
+  gap:         var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.theme-card__label {
+  font-family: var(--font-display);
+  font-size:   var(--text-sm);
+  font-weight: 700;
+  color:       var(--text-primary);
+}
+
+.theme-card__arabic {
+  font-family: var(--font-arabic);
+  font-size:   var(--text-base);
+  color:       var(--text-muted);
+}
+
+.theme-card__desc {
+  font-size:   var(--text-xs);
+  color:       var(--text-muted);
+  line-height: 1.5;
+}
