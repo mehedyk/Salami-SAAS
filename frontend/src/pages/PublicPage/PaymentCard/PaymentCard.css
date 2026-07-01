@@ -1,0 +1,111 @@
+.pay-card {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-4);
+  padding:       var(--space-4) var(--space-5);
+  background:    var(--provider-bg, rgba(255,255,255,0.05));
+  border:        1px solid color-mix(in srgb, var(--provider-color, #fff) 25%, transparent);
+  border-radius: var(--radius-lg);
+  transition:    transform var(--duration-base) var(--ease-spring),
+                 box-shadow var(--duration-base),
+                 border-color var(--duration-base);
+  position:      relative;
+  overflow:      hidden;
+}
+
+.pay-card::before {
+  content:    '';
+  position:   absolute;
+  left:       0;
+  top:        0;
+  bottom:     0;
+  width:      3px;
+  background: var(--provider-color, #fff);
+  border-radius: 0 2px 2px 0;
+}
+
+.pay-card:hover {
+  transform:  translateY(-2px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--provider-color) 20%, transparent),
+              0 2px 8px rgba(0,0,0,0.3);
+  border-color: color-mix(in srgb, var(--provider-color) 45%, transparent);
+}
+
+.pay-card__icon {
+  width:           40px;
+  height:          40px;
+  border-radius:   var(--radius-md);
+  background:      var(--provider-color);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       var(--text-lg);
+  font-weight:     900;
+  color:           #fff;
+  flex-shrink:     0;
+  font-family:     var(--font-display);
+  letter-spacing:  -0.02em;
+}
+
+.pay-card__body {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  min-width:      0;
+}
+
+.pay-card__provider {
+  font-size:      var(--text-xs);
+  font-weight:    700;
+  color:          var(--provider-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.pay-card__number {
+  font-family:    var(--font-mono);
+  font-size:      var(--text-base);
+  font-weight:    700;
+  color:          var(--theme-text, var(--text-primary));
+  letter-spacing: 0.04em;
+}
+
+.pay-card__name {
+  font-size: var(--text-xs);
+  color:     var(--theme-text-sub, var(--text-muted));
+}
+
+/* ── Copy button ── */
+.pay-card__copy {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-1);
+  padding:         var(--space-2) var(--space-3);
+  border-radius:   var(--radius-md);
+  border:          1px solid color-mix(in srgb, var(--provider-color) 30%, transparent);
+  background:      transparent;
+  color:           var(--provider-color);
+  font-size:       var(--text-xs);
+  font-weight:     600;
+  cursor:          pointer;
+  white-space:     nowrap;
+  transition:      all var(--duration-fast);
+  flex-shrink:     0;
+}
+
+.pay-card__copy:hover {
+  background: color-mix(in srgb, var(--provider-color) 15%, transparent);
+}
+
+.pay-card__copy--done {
+  background:   color-mix(in srgb, #10b981 15%, transparent);
+  border-color: rgba(16,185,129,0.4);
+  color:        #34d399;
+}
+
+.pay-card__copy-icon { font-size: 0.9rem; }
+
+@media (max-width: 400px) {
+  .pay-card__copy span:last-child { display: none; }
+}
