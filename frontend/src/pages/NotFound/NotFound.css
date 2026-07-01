@@ -1,0 +1,37 @@
+.notfound {
+  min-height:      80dvh;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--space-6);
+}
+
+.notfound__inner {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-4);
+  text-align:     center;
+  animation:      slideUp var(--duration-slow) var(--ease-smooth) both;
+}
+
+.notfound__moon {
+  font-size: 4rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.notfound__title {
+  font-size:      var(--text-6xl);
+  font-weight:    800;
+  letter-spacing: -0.05em;
+  background:     var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.notfound__message {
+  font-size:     var(--text-lg);
+  color:         var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
