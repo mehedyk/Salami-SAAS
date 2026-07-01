@@ -1,0 +1,121 @@
+.img-uploader { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.img-uploader__label {
+  font-size:   var(--text-sm);
+  font-weight: 600;
+  color:       var(--text-secondary);
+}
+
+.img-uploader__zone {
+  position:        relative;
+  width:           100%;
+  border:          2px dashed var(--surface-border);
+  border-radius:   var(--radius-lg);
+  background:      var(--surface-elevated);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  cursor:          pointer;
+  overflow:        hidden;
+  transition:      border-color var(--duration-fast), background var(--duration-fast);
+}
+
+.img-uploader__zone:hover:not(.img-uploader__zone--disabled) {
+  border-color: var(--color-gold-500);
+  background:   rgba(245,158,11,0.04);
+}
+
+.img-uploader__zone--drag {
+  border-color: var(--color-gold-500);
+  background:   rgba(245,158,11,0.08);
+  border-style: solid;
+}
+
+.img-uploader__zone--uploading { cursor: wait; }
+
+.img-uploader__zone--disabled {
+  opacity: 0.5;
+  cursor:  not-allowed;
+}
+
+/* ── Empty state ── */
+.img-uploader__empty {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-2);
+  padding:        var(--space-8) var(--space-4);
+  text-align:     center;
+  pointer-events: none;
+}
+
+.img-uploader__icon { font-size: 2rem; }
+
+.img-uploader__hint {
+  font-size:  var(--text-sm);
+  color:      var(--text-secondary);
+  margin:     0;
+}
+
+.img-uploader__size {
+  font-size: var(--text-xs);
+  color:     var(--text-muted);
+  margin:    0;
+}
+
+/* ── Preview ── */
+.img-uploader__preview {
+  width:       100%;
+  height:      100%;
+  object-fit:  cover;
+  display:     block;
+}
+
+.img-uploader__overlay {
+  position:         absolute;
+  inset:            0;
+  background:       rgba(0,0,0,0);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  transition:       background var(--duration-base);
+}
+
+.img-uploader__zone:hover .img-uploader__overlay {
+  background: rgba(0,0,0,0.5);
+}
+
+.img-uploader__overlay-text {
+  color:       #fff;
+  font-size:   var(--text-sm);
+  font-weight: 600;
+  opacity:     0;
+  transition:  opacity var(--duration-base);
+}
+
+.img-uploader__zone:hover .img-uploader__overlay-text { opacity: 1; }
+
+/* ── Upload progress bar ── */
+.img-uploader__progress {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  height:     3px;
+  width:      100%;
+  background: var(--gradient-gold);
+  animation:  shimmer 1.2s infinite linear;
+  background-size: 400% 100%;
+}
+
+/* ── Error ── */
+.img-uploader__error {
+  font-size: var(--text-xs);
+  color:     #f87171;
+}
+
+/* ── Avatar variant (square, round) ── */
+.img-uploader--avatar .img-uploader__zone {
+  border-radius: 50%;
+  max-width:     128px;
+  margin:        0 auto;
+}
