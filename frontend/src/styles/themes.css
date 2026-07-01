@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   themes.css — 6 Salami page themes
+   Applied as data-theme attribute on the public page wrapper.
+   Each theme overrides the CSS custom properties defined in variables.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── noor (نور) — Ivory + warm gold — Free / default ─────────────────────── */
+[data-theme="noor"] {
+  --theme-bg:          #0f0e0b;
+  --theme-surface:     #1a1810;
+  --theme-border:      rgba(245,200,80,0.15);
+  --theme-accent:      #f5c850;
+  --theme-accent-2:    #d4a017;
+  --theme-text:        #f5f0e8;
+  --theme-text-sub:    #b8aa8e;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245,200,80,0.15) 0%, transparent 65%);
+  --theme-card-bg:     rgba(245,200,80,0.04);
+  --theme-glow:        rgba(245,200,80,0.3);
+}
+
+/* ── zafran (زعفران) — Saffron + deep earth — Premium ───────────────────── */
+[data-theme="zafran"] {
+  --theme-bg:          #110d08;
+  --theme-surface:     #1d1510;
+  --theme-border:      rgba(230,130,30,0.15);
+  --theme-accent:      #e6821e;
+  --theme-accent-2:    #c45e0a;
+  --theme-text:        #f0e8d8;
+  --theme-text-sub:    #b09070;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(230,130,30,0.18) 0%, transparent 65%);
+  --theme-card-bg:     rgba(230,130,30,0.04);
+  --theme-glow:        rgba(230,130,30,0.3);
+}
+
+/* ── layla (ليلى) — Midnight + rose gold — Premium ──────────────────────── */
+[data-theme="layla"] {
+  --theme-bg:          #0a080f;
+  --theme-surface:     #130f1e;
+  --theme-border:      rgba(200,140,160,0.15);
+  --theme-accent:      #d4878a;
+  --theme-accent-2:    #a85560;
+  --theme-text:        #f0e8f0;
+  --theme-text-sub:    #a890a0;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(180,100,130,0.2) 0%, transparent 65%);
+  --theme-card-bg:     rgba(200,140,160,0.04);
+  --theme-glow:        rgba(200,140,160,0.3);
+}
+
+/* ── sabz (سبز) — Deep emerald + warm cream — Free ──────────────────────── */
+[data-theme="sabz"] {
+  --theme-bg:          #060f0a;
+  --theme-surface:     #0d1a12;
+  --theme-border:      rgba(40,200,120,0.12);
+  --theme-accent:      #28c878;
+  --theme-accent-2:    #0f8c4a;
+  --theme-text:        #e8f5ee;
+  --theme-text-sub:    #7ab890;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(40,200,120,0.14) 0%, transparent 65%);
+  --theme-card-bg:     rgba(40,200,120,0.04);
+  --theme-glow:        rgba(40,200,120,0.25);
+}
+
+/* ── qamar (قمر) — Deep navy + silver — Premium ─────────────────────────── */
+[data-theme="qamar"] {
+  --theme-bg:          #060810;
+  --theme-surface:     #0c1020;
+  --theme-border:      rgba(160,180,220,0.12);
+  --theme-accent:      #a0b4dc;
+  --theme-accent-2:    #5a78b0;
+  --theme-text:        #e8edf8;
+  --theme-text-sub:    #7888aa;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(90,120,180,0.18) 0%, transparent 65%);
+  --theme-card-bg:     rgba(160,180,220,0.04);
+  --theme-glow:        rgba(160,180,220,0.25);
+}
+
+/* ── fajr (فجر) — Soft lavender + white dawn — Free ─────────────────────── */
+[data-theme="fajr"] {
+  --theme-bg:          #09090f;
+  --theme-surface:     #12121e;
+  --theme-border:      rgba(160,140,220,0.12);
+  --theme-accent:      #b8a8e8;
+  --theme-accent-2:    #8060c0;
+  --theme-text:        #eeeaf8;
+  --theme-text-sub:    #9080b8;
+  --theme-gradient:    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(130,100,200,0.16) 0%, transparent 65%);
+  --theme-card-bg:     rgba(160,140,220,0.04);
+  --theme-glow:        rgba(160,140,220,0.25);
+}
+
+/* ── Shared theme component styles ───────────────────────────────────────── */
+.themed-page {
+  background:  var(--theme-bg);
+  color:       var(--theme-text);
+  min-height:  100dvh;
+  position:    relative;
+}
+
+.themed-page::before {
+  content:  '';
+  position: fixed;
+  inset:    0;
+  background: var(--theme-gradient);
+  pointer-events: none;
+  z-index:  0;
+}
+
+.themed-card {
+  background:    var(--theme-card-bg);
+  border:        1px solid var(--theme-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+}
+
+.themed-btn {
+  background:  linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-accent-2) 100%);
+  color:       #0a0a0a;
+  font-weight: 700;
+  box-shadow:  0 0 20px var(--theme-glow);
+}
+
+.themed-btn:hover {
+  box-shadow: 0 0 32px var(--theme-glow), 0 4px 16px rgba(0,0,0,0.4);
+  transform:  translateY(-1px);
+}
+
+.themed-accent { color: var(--theme-accent); }
