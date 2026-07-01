@@ -1,0 +1,14 @@
+flask==3.0.3
+flask-cors==4.0.1
+flask-limiter==3.7.0
+pymongo==4.7.3
+dnspython==2.6.1
+python-dotenv==1.0.1
+cloudinary==1.40.0
+requests==2.32.3
+PyJWT==2.8.0
+cryptography==42.0.8
+Werkzeug==3.0.3
+marshmallow==3.21.3
+bleach==6.1.0
+gunicorn==22.0.0
