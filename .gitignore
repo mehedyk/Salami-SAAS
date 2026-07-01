@@ -31,3 +31,5 @@ Thumbs.db
 *.log
 logs/
 yo.md
+backend/.env.example
+frontend/.env.example
