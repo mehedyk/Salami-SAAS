@@ -1,0 +1,47 @@
+.share-btn {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  cursor:      pointer;
+  border-radius: var(--radius-md);
+  transition:  all var(--duration-base) var(--ease-spring);
+  white-space: nowrap;
+}
+
+/* Sizes */
+.share-btn--sm { font-size: var(--text-xs); padding: var(--space-2) var(--space-3); }
+.share-btn--md { font-size: var(--text-sm); padding: var(--space-3) var(--space-5); }
+
+/* Variants */
+.share-btn--secondary {
+  background:   transparent;
+  color:        var(--text-secondary);
+  border:       1px solid var(--surface-border);
+}
+.share-btn--secondary:hover { border-color: var(--color-gold-500); color: var(--text-accent); background: rgba(245,158,11,0.05); }
+
+.share-btn--primary {
+  background:  var(--gradient-gold);
+  color:       var(--color-ink-950);
+  border:      none;
+  box-shadow:  var(--shadow-gold);
+}
+.share-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(245,158,11,0.4), 0 6px 16px rgba(0,0,0,0.4); }
+
+.share-btn--ghost {
+  background:  transparent;
+  color:       var(--text-muted);
+  border:      none;
+}
+.share-btn--ghost:hover { color: var(--text-primary); background: var(--surface-elevated); }
+
+/* Copied state */
+.share-btn--copied {
+  border-color: rgba(16,185,129,0.4) !important;
+  color:        #34d399 !important;
+  background:   rgba(16,185,129,0.08) !important;
+}
+
+.share-btn__icon { font-size: 0.9em; }
