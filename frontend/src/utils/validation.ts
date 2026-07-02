@@ -2,13 +2,15 @@ import { z } from 'zod'
 
 // ─── Reusable field schemas ───────────────────────────────────────────────────
 
-const safeString = (max: number) =>
+const noScript = (v: string) => !/<script/i.test(v) && !/javascript:/i.test(v)
+
+const safeString = (min: number, max: number, fieldName = 'Field') =>
   z
     .string()
     .trim()
+    .min(min, `${fieldName} must be at least ${min} characters`)
     .max(max, `Max ${max} characters`)
-    .refine((v) => !/<script/i.test(v), 'Invalid characters detected')
-    .refine((v) => !/javascript:/i.test(v), 'Invalid characters detected')
+    .refine(noScript, 'Invalid characters detected')
 
 const bdPhoneNumber = z
   .string()
@@ -33,20 +35,20 @@ export const usernameSchema = z
   .refine((v) => !v.startsWith('-') && !v.startsWith('_'), 'Cannot start with - or _')
 
 export const pageSchema = z.object({
-  title:   safeString(60).min(2, 'Title must be at least 2 characters'),
-  bio:     safeString(300).optional(),
+  title:   safeString(2, 60, 'Title'),
+  bio:     z.string().trim().max(300).optional(),
   theme:   z.enum(['noor', 'zafran', 'layla', 'sabz', 'qamar', 'fajr']),
 })
 
 export const paymentMethodSchema = z.object({
-  provider:    z.enum(['bkash', 'nagad', 'rocket', 'bank']),
-  number:      bdPhoneNumber,
-  account_name: safeString(50).min(2, 'Account name required'),
+  provider:     z.enum(['bkash', 'nagad', 'rocket', 'bank']),
+  number:       bdPhoneNumber,
+  account_name: safeString(2, 50, 'Account name'),
 })
 
 export const ledgerEntrySchema = z.object({
-  senderName:    safeString(60).min(2, 'Name required'),
-  senderNote:    safeString(200).optional(),
+  senderName:    safeString(2, 60, 'Name'),
+  senderNote:    z.string().trim().max(200).optional(),
   amount:        z.number().int().min(1, 'Amount must be at least ৳1').max(100000, 'Amount too large'),
   provider:      z.enum(['bkash', 'nagad', 'rocket', 'bank']),
   transactionId: transactionId.optional(),
@@ -60,7 +62,7 @@ export const subscriptionSchema = z.object({
 })
 
 export const profileSchema = z.object({
-  displayName: safeString(60).min(2, 'Display name required'),
+  displayName: safeString(2, 60, 'Display name'),
   username:    usernameSchema,
 })
 
