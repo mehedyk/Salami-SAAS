@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.accounts.dev https://*.clerk.accounts.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://*.clerk.com; connect-src 'self' https://*.clerk.accounts.dev https://clerk.accounts.dev YOUR_RENDER_BACKEND_URL; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.accounts.dev https://*.clerk.accounts.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://*.clerk.com https://*.clerk.accounts.dev; connect-src 'self' https://*.clerk.accounts.dev https://clerk.accounts.dev https://salami-api.onrender.com https://api.clerk.com; frame-ancestors 'none';"
         },
         { "key": "X-Content-Type-Options",    "value": "nosniff" },
         { "key": "X-Frame-Options",            "value": "DENY" },
