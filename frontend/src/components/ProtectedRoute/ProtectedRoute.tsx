@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children }: Props) {
   if (!isSignedIn) {
     return (
       <div className="flex items-center justify-center min-h-[80dvh]">
-        <SignIn routing="hash" />
+        <SignIn />
       </div>
     )
   }

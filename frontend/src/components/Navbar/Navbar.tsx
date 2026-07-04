@@ -47,7 +47,7 @@ export default function Navbar() {
           </SignedOut>
           <SignedIn>
             <Link to="/dashboard" className="btn btn-secondary btn-sm">Dashboard</Link>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </SignedIn>
         </div>
 

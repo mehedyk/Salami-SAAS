@@ -30,8 +30,3 @@ Thumbs.db
 # ── Logs ────────────────────────────────────────────────────────
 *.log
 logs/
-backend/.env
-frontend/.env
-backend/.env.example
-frontend/.env.example
-yo.md
